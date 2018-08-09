@@ -1,6 +1,7 @@
 // Variables
 const courses = document.querySelector('#courses-list'),
-        shoppingCartContent = document.querySelector('#cart-content tbody');
+        shoppingCartContent = document.querySelector('#cart-content tbody')
+        clearCartButton = document.querySelector('#clear-cart');
 
 // Listeners
 loadEventListeners();
@@ -11,6 +12,12 @@ function loadEventListeners(){
 
     // When a new course is added
     courses.addEventListener('click', buyCourse);
+
+    // when the remove button is clicked
+    shoppingCartContent.addEventListener('click', removeCourse);
+
+    // Clear the cart button
+    clearCartButton.addEventListener('click', clearCart);
 }
 
 // Functions
@@ -71,4 +78,23 @@ function addIntoCart(course){
     `;
     // Add into the shopping cart
     shoppingCartContent.appendChild(row);
+}
+
+// remove course from the dom
+function removeCourse(e){
+    if(e.target.classList.contains('remove')){
+        e.target.parentElement.parentElement.remove();
+    }
+}
+
+// Clears the shopping cart
+function clearCart(){
+    // Method 1: overwrite html in table body with empty string
+    //shoppingCartContent.innerHTML = '';
+
+    // Method 2: Reccomended way
+    // Loop whie there is a first child in shopping cart
+    while(shoppingCartContent.firstChild){
+        shoppingCartContent.removeChild(shoppingCartContent.firstChild);
+    }
 }
