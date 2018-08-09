@@ -18,6 +18,9 @@ function loadEventListeners(){
 
     // Clear the cart button
     clearCartButton.addEventListener('click', clearCart);
+
+    // Document ready
+    document.addEventListener('DOMContentLoaded', getFromLocalStorage);
 }
 
 // Functions
@@ -78,6 +81,35 @@ function addIntoCart(course){
     `;
     // Add into the shopping cart
     shoppingCartContent.appendChild(row);
+
+    // Add course into local storage
+    saveIntoStorage(course);
+}
+
+// Add the courses into the local storage
+function saveIntoStorage(course){
+    let courses = getCoursesFromStorage();
+
+    // add the course into the array
+    courses.push(course);
+
+    // since storage only saves strings, we need to convert JSON into
+    // string
+    localStorage.setItem('courses', JSON.stringify(courses));
+}
+
+// Get the contents from the storage
+function getCoursesFromStorage(){
+    let courses;
+
+    // if key exists in storage then we get value otherwise
+    // create and empty array
+    if(localStorage.getItem('courses') === null){
+        courses = [];
+    } else {
+        courses = JSON.parse(localStorage.getItem('courses')); 
+    }
+    return courses;
 }
 
 // remove course from the dom
@@ -93,8 +125,46 @@ function clearCart(){
     //shoppingCartContent.innerHTML = '';
 
     // Method 2: Reccomended way
-    // Loop whie there is a first child in shopping cart
+    // Loop while there is a first child in shopping cart
     while(shoppingCartContent.firstChild){
         shoppingCartContent.removeChild(shoppingCartContent.firstChild);
     }
+
+    // Clear from local storage
+    clearLocalStorage();
+}
+
+// Clears the whole local storage
+function clearLocalStorage(){
+    localStorage.clear();
+}
+
+// Loads when document is ready and print courses into shopping cart
+function getFromLocalStorage(){
+    let coursesLS = getCoursesFromStorage();
+
+    // LOOP through the courses and print into the cart
+    coursesLS.forEach(function(course){
+        // create the <tr></tr>
+        const row = document.createElement('tr');
+
+        // print the content
+        row.innerHTML = `
+            <tr>
+                <td>
+                    <img src="${course.image}" width=100>
+                </td>
+                <td>
+                    ${course.title}
+                </td>
+                <td>
+                    ${course.price}
+                </td>
+                <td>
+                    <a href = "#" class="remove" data-id="${course.id}">X</a>
+                </td>
+            </tr>
+        `;
+        shoppingCartContent.appendChild(row);
+    })
 }
